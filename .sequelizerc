@@ -1,0 +1,14 @@
+// .sequelizerc
+const path = require('path');
+
+module.exports = {
+  'config': path.resolve('src/config/config.js'),
+  'models-path': path.resolve('src/models'),
+  'seeders-path': path.resolve('src/seeders'),
+  'migrations-path': path.resolve('src/migrations'),
+};
+
+
+// Because by default, Sequelize CLI looks for folders like models/, config/, migrations/ in the root directory.
+
+// When you move those into src/, you need .sequelizerc to tell the CLI where to find them.

@@ -1,0 +1,49 @@
+{
+  "name": "jobportal",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "generate": "sequelize-cli model:generate",
+    "migrate": "sequelize-cli db:migrate",
+    "seed-gen": "sequelize-cli seed:generate --name",
+    "seed-all": "sequelize-cli db:seed:all",
+    "undo-seed": "sequelize-cli db:seed:undo:all",
+    "undo-migrate": "sequelize-cli db:migrate:undo"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@socket.io/redis-adapter": "^8.3.0",
+    "axios": "^1.12.2",
+    "bcrypt": "^6.0.0",
+    "bcryptjs": "^3.0.2",
+    "child_process": "^1.0.2",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0",
+    "express-session": "^1.18.2",
+    "express-validator": "^7.2.1",
+    "firebase-admin": "^13.5.0",
+    "google-auth-library": "^10.4.0",
+    "ioredis": "^5.8.1",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^2.0.2",
+    "nodemailer": "^7.0.5",
+    "passport": "^0.7.0",
+    "passport-google-oauth20": "^2.0.0",
+    "pg": "^8.16.3",
+    "pg-hstore": "^2.3.4",
+    "qrcode": "^1.5.4",
+    "sequelize": "^6.37.7",
+    "socket.io": "^4.8.1",
+    "speakeasy": "^2.0.0"
+  },
+  "devDependencies": {
+    "sequelize-cli": "^6.6.3"
+  }
+}
