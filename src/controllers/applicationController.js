@@ -192,11 +192,12 @@ if (latestNotif) {
 // };
 
 
+
 const getJobApplicationDetail = async (req, res) => {
   try {
     const { jobId, applicationId } = req.params;
 
-    // Verify that the job belongs to the logged-in recruiter
+    // Verify job ownership
     const job = await Job.findOne({ 
       where: { id: jobId, postedBy: req.user.id } 
     });
@@ -204,11 +205,11 @@ const getJobApplicationDetail = async (req, res) => {
     if (!job) {
       return res.status(403).json({ 
         success: false, 
-        message: 'Not authorized to view applications for this job' 
+        message: "Not authorized to view applications for this job" 
       });
     }
 
-    // Fetch the specific application along with applicant info
+    // Fetch application + applicant info
     const application = await Application.findOne({
       where: { jobId, id: applicationId },
       include: [
@@ -236,19 +237,36 @@ const getJobApplicationDetail = async (req, res) => {
     if (!application) {
       return res.status(404).json({ 
         success: false, 
-        message: 'Application not found for this applicant' 
+        message: "Application not found for this applicant" 
       });
     }
 
-    // Check if structured resume exists for this applicant
     const structuredResume = await StructuredResume.findOne({
       where: { userId: application.applicant.id },
     });
 
-    const hasStructuredResume = !!structuredResume; // true if record exists
+    const hasStructuredResume = !!structuredResume;
+    const baseUrl = `${req.protocol}://${req.get("host")}`;
 
-    // You can re-enable this if you want full URLs
-    // const baseUrl = `${req.protocol}://${req.get("host")}`;
+    // 🧹 Fix profile pic URL duplication
+    let profilePic = application.applicant.profilepic;
+    if (profilePic) {
+      profilePic = profilePic.trim();
+      if (profilePic.includes("http://") || profilePic.includes("https://")) {
+        profilePic = profilePic.split("/").pop(); // Extract only filename
+      }
+      profilePic = `${baseUrl}/images/${profilePic}`;
+    }
+
+    // 🧹 Fix resume URL duplication
+    let resumeUrl = application.applicant.resume;
+    if (resumeUrl) {
+      resumeUrl = resumeUrl.trim();
+      if (resumeUrl.includes("http://") || resumeUrl.includes("https://")) {
+        resumeUrl = resumeUrl.split("/").pop(); // Extract only filename
+      }
+      resumeUrl = `${baseUrl}/resume/${resumeUrl}`;
+    }
 
     return res.status(200).json({
       success: true,
@@ -262,16 +280,15 @@ const getJobApplicationDetail = async (req, res) => {
         experience: application.applicant.experience,
         education: application.applicant.education,
         personalwebsite: application.applicant.personalwebsite,
-        profilepic: application.applicant.profilepic,
-        resume: application.applicant.resume,
+        profilepic: profilePic,
+        resume: resumeUrl,
         location: application.applicant.location,
         phoneNumber: application.applicant.phoneNumber,
         bioGraphy: application.applicant.bioGraphy,
         appliedAt: application.appliedAt,
-        hasStructuredResume, // 👈 added here
+        hasStructuredResume,
       },
     });
-
   } catch (err) {
     console.error("Error fetching specific job application:", err);
     return res.status(500).json({ error: err.message });
@@ -279,7 +296,11 @@ const getJobApplicationDetail = async (req, res) => {
 };
 
 
-// Get job Applications ( recruiter only  )
+
+
+
+
+
 const getJobApplications = async (req, res) => {
   try {
     const { jobId } = req.params;
